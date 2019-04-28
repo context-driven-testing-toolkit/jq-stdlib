@@ -33,14 +33,13 @@
 #    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | pluck("A") => [{"A":0},{"A":1},{"A":2}]
 
 def pluck($key):
-
-[..
-   | .[$key]?
-   | select(. != null)
-   | {
-      "\($key)": .
-      }
- ];
+   [..
+      | .[$key]?
+      | select(. != null)
+      | {
+         "\($key)": .
+         }
+    ];
 
 
 # Collect
@@ -54,12 +53,11 @@ def pluck($key):
 #    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | collect => {"A":[0,1,2]}
 
 def collect($key):
-
-pluck($key)
-  | map(reduce . as $doc ([]; $doc[$key]))
-  | {
-     "\($key)": .
-     };
+   pluck($key)
+     | map(reduce . as $doc ([]; $doc[$key]))
+     | {
+        "\($key)": .
+        };
 
 
 # RoundF
