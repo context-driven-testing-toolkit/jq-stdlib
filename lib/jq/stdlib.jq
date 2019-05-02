@@ -39,7 +39,8 @@ def pluck($key):
       | {
          "\($key)": .
          }
-    ];
+    ]
+;
 
 # Collect
 #
@@ -56,7 +57,8 @@ def collect($key):
      | map(reduce . as $doc ([]; $doc[$key]))
      | {
         "\($key)": .
-        };
+        }
+;
 
 
 # RoundF
@@ -75,7 +77,8 @@ def roundf($places):
 
 def roundf:
   (. * pow(10; 3))
-  | round / pow(10; 3);
+  | round / pow(10; 3)
+;
 
 
 # Average
@@ -85,7 +88,8 @@ def roundf:
 #     [1, 10, 100] | avg => 37
 
 def avg:
-  add / length;
+  add / length
+;
 
 
 # Mean
@@ -93,7 +97,8 @@ def avg:
 # Alias for avg()
 
 def mean:
-  avg;
+  avg
+;
 
 
 # Median
@@ -113,7 +118,8 @@ def median:
     (.[length / 2 | floor]
       + .[length / 2 | floor - 1])
     / 2
-  end;
+  end
+;
 
 
 # Compact
@@ -128,7 +134,8 @@ def median:
 #     [null,0,null,1,2] | compact => [0,1,2]
 
 def compact:
-  map(select(. != null));
+  map(select(. != null))
+;
 
 
 # Decant
@@ -141,4 +148,25 @@ def compact:
 
 def decant($key):
   pluck($key)
-  | map(.[]);
+  | map(.[])
+;
+
+
+# cons and cdr
+#
+# These classic Lisp functions return the first item in a list and all
+# *but* the first item in a list, respectively.
+#
+# Synopsis:
+#
+#    [1,2,3,4,5] | cons => 1
+#
+#    [1,2,3,4,5] | cdr => [2,3,4,5]
+
+def cons:
+  .[0]
+;
+
+def cdr:
+  .[1:length]
+;
