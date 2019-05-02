@@ -41,7 +41,6 @@ def pluck($key):
          }
     ];
 
-
 # Collect
 #
 # pluck() all the values for a property and return an object with a
@@ -130,3 +129,16 @@ def median:
 
 def compact:
   map(select(. != null));
+
+
+# Decant
+#
+# pluck() and then dereference each of the returned values.
+#
+# Synopsis:
+#
+#    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | decant("A") => [0,1,2}]
+
+def decant($key):
+  pluck($key)
+  | map(.[]);
