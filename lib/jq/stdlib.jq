@@ -33,13 +33,13 @@
 #    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | pluck("A") => [{"A":0},{"A":1},{"A":2}]
 
 def pluck($key):
-   [..
-      | .[$key]?
-      | select(. != null)
-      | {
-         "\($key)": .
-         }
-    ]
+  [..
+     | .[$key]?
+     | select(. != null)
+     | {
+        "\($key)": .
+        }
+   ]
 ;
 
 # Collect
@@ -53,11 +53,11 @@ def pluck($key):
 #    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | collect => {"A":[0,1,2]}
 
 def collect($key):
-   pluck($key)
-     | map(reduce . as $doc ([]; $doc[$key]))
-     | {
-        "\($key)": .
-        }
+  pluck($key)
+  | map(reduce . as $doc ([]; $doc[$key]))
+  | {
+     "\($key)": .
+     }
 ;
 
 
@@ -112,13 +112,13 @@ def mean:
 def median:
   sort
   | if length % 2 == 1
-  then
-    .[length / 2 | floor]
-  else
-    (.[length / 2 | floor]
-      + .[length / 2 | floor - 1])
-    / 2
-  end
+then
+  .[length / 2 | floor]
+else
+  (.[length / 2 | floor]
+   + .[length / 2 | floor - 1])
+/ 2
+end
 ;
 
 
@@ -169,4 +169,11 @@ def cons:
 
 def cdr:
   .[1:length]
+;
+
+
+# Assertions
+
+def is_number:
+  type == "number"
 ;
