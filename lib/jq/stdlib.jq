@@ -171,6 +171,139 @@ def cdr:
   .[1:length]
 ;
 
+# fromepoch/0 and fromepoch/1
+#
+# Aliases for handling epoch objects. Both the /0 and /1 aritys enable value
+# to be passed from a pipe or directly into the function.
+#
+# Synopsis:
+#
+#    1577836800 | fromepoch => "2020-01-01T00:00:00Z"
+#
+#    fromepoch(1577836800) => "2020-01-01T00:00:00Z"
+
+def fromepoch:
+    . | todate
+;
+
+def fromepoch(epoch):
+    epoch | fromepoch
+;
+
+# fromepochms/0 and fromepochms/1
+#
+# Aliases for handling epoch millisecond objects. Both the /0 and /1 aritys enable value
+# to be passed from a pipe or directly into the function.
+#
+# Synopsis:
+#
+#    1577836800000 | fromepochms => "2020-01-01T00:00:00Z"
+#
+#    fromepochms(1577836800000) => "2020-01-01T00:00:00Z"
+
+def fromepochms:
+    . / 1000 | todate
+;
+
+def fromepochms(epoch):
+    epoch | fromepochms
+;
+
+# toepoch/0 and toepoch/1
+# toepochms/0 and toepochms/1
+#
+# The inverse of fromepoch/0, fromepoch/1, fromepochms/0 and fromepochms/1.
+# Converts a date object into an epoch seconds or milliseconds object.
+#
+
+def toepoch:
+    . | fromdate
+;
+
+def toepoch(d):
+    d | toepoch
+;
+
+def toepochms:
+    . | fromdate * 1000
+;
+
+def toepochms(d):
+    d | toepochms
+;
+
+# fetchpath/2 and fetchpath/1
+#
+# Helper utilities for #fetch
+# $key must be an array-path, as with getpath/1
+#
+
+def fetchpath($key; default):
+  getpath($key) as $value
+  | if $value != null then $value
+    elif ($key|length) == 1
+    then if has($key[-1]) then null else default end
+    else getpath($key[:-1]) as $x
+    | if $x == null then default
+      elif $x|has($key[-1]) then null
+      else default
+      end
+  end
+;
+
+def fetchpath(key):
+    fetchpath(key; empty)
+;
+
+# fetch/2 and fetch/1
+#
+# Utility to return a default object (or empty) if the path expression returns no values.
+# Same idea as #fetch in Ruby
+#
+# Synopsis:
+#
+#    {"foo": "bar"} | fetch(.foo; "baz") => "bar"
+#    {"foo": "bar"} | fetch(.idontexist; "baz") => "baz"
+#
+
+def fetch(key; default):
+    fetchpath({} | path(key); default)
+;
+
+def fetch(key):
+    fetch(key; empty)
+;
+
+# grep/1
+#
+# Utility to find a value in a nested object based on the name of the key
+#
+# Synopsis:
+#
+#    {"a": {"b": {"c": "d": "e" } } } | grep(.d) => "e"
+#
+
+def grep(key):
+    ..
+    | key?
+    | select(. != null)
+    | .
+;
+
+# pairwise/1
+#
+# Emits a stream consisting of pairs of items taken from `stream`
+# See https://stackoverflow.com/a/48792655/1052013
+#
+# Synopsis:
+#
+#    [0,1,"a","b"] | pairwise(.[]) => [0,1] ["a", "b"]
+
+def pairwise(stream):
+  foreach stream as $i ([];
+      if length == 1 then . + [$i] else [$i] end;
+      select(length == 2))
+;
 
 # Assertions
 
