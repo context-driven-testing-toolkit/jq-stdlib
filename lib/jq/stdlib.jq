@@ -51,7 +51,7 @@ def pluck($key):
 #
 # Synopsis:
 #
-#    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | collect => {"A":[0,1,2]}
+#    [{A:0},{x:{A:1,b:9},y:{A:2,b:8}}] | collect("A" => {"A":[0,1,2]}
 
 def collect($key):
   pluck($key)
